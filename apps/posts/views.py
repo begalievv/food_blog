@@ -1,6 +1,32 @@
 from django.shortcuts import render
-from django.views.generic import ListView, View, TemplateView
-from django.http import HttpResponse
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 
-class PostsListView(TemplateView):
-    template_name = 'posts/base.html'
+from .models import PostImage, Post
+
+class PostsListView(ListView):
+    template_name = 'posts/home.html'
+    model = Post
+
+
+class PostDetailView(DetailView):
+    template_name = 'posts/post_detail.html'
+    model = Post
+
+
+class PostCreateView(CreateView):
+    model = Post
+    template_name = 'posts/post_create.html'
+    fields = '__all__'
+
+
+class PostEditView(UpdateView):
+    model = Post
+    template_name = 'posts/post_update.html'
+    fields = ['title', 'body',]
+
+
+class PostDeleteView(DeleteView):
+    template_name = 'posts/post_delete.html'
+    model = Post
+    success_url = reverse_lazy('post_list')

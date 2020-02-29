@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% for image in object.images.all %}
+<div>
+    <img height="300px" width="300px" src="{{ image.get_absolute_image_url }}">
+<div/>
+{% endfor %}
+
+
+    {{ object.title }}
+<p>{{ object.description }} </p>
+
+<button type="button" class="btn btn-danger"><a href="{% url 'post_delete' object.id %}">delete</a></button>
+<button type="button" class="btn btn-success"><a href="{% url 'post_edit' object.id %}">Update</a></button>
+
+
+{% endblock %}
+

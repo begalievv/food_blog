@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for category in object_list %}
+<section class="caviar-about-us-area section-padding-150" id="about">
+        <div class="container">
+            <!-- About Us Single Area -->
+            <div class="row align-items-center">
+                <div class="col-12 col-md-6">
+                    <div class="about-us-thumbnail wow fadeInUp" data-wow-delay="0.5s">
+                        <img height="200px" width="300px" src="{{ category.get_absolute_image_url }}" alt="">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-5 ml-md-auto">
+                    <div class="section-heading">
+                        <a href="{% url 'filter_by_category' category.pk %}"><h2>{{ category.name }}</h2></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <hr>
+    {% endfor %}
+
+</section>
+
+{% endblock %}

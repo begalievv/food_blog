@@ -40,7 +40,7 @@ class Post(models.Model):
     )
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    category = models.ManyToManyField(Category)
+    category = models.ManyToManyField(Category, related_name='categories')
     status = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default='draft'
     )

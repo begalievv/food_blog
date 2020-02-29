@@ -6,16 +6,22 @@
 {% for image in object.images.all %}
 <div>
     <img height="300px" width="300px" src="{{ image.get_absolute_image_url }}">
-<div/>
-{% endfor %}
-
+    <div/>
+    {% endfor %}
 
     {{ object.title }}
-<p>{{ object.description }} </p>
+    <p>{{ object.description }} </p>
 
-<button type="button" class="btn btn-danger"><a href="{% url 'post_delete' object.id %}">delete</a></button>
-<button type="button" class="btn btn-success"><a href="{% url 'post_edit' object.id %}">Update</a></button>
+    <button type="button" class="btn btn-danger"><a href="{% url 'post_delete' object.id %}">delete</a></button>
+    <button type="button" class="btn btn-success"><a href="{% url 'post_edit' object.id %}">Update</a></button>
+    <button type="button" class="btn btn-success"><a href="{% url 'add_photo' object.id %}">Add photo</a></button>
+    <hr>
 
+    <form action="" method="POST">
+        <p>Добавить комментарий</p>
+        <input type="text">
+        <input type="submit" value="Добавить">
+    </form>
 
-{% endblock %}
+    {% endblock %}
 

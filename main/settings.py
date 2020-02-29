@@ -25,7 +25,7 @@ SECRET_KEY = 'e(fu49$_1=td*!0ojh+o^%lo@0oayxkfc26-^g=2=og-j#@57b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mysite.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -33,6 +33,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'apps.categories',
     'apps.posts',
+    'social_django',
+    'social.apps.django_app.default',
     'apps.accounts',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -67,6 +69,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
             ],
         },
     },
@@ -130,11 +134,22 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 STATIC_URL = '/static/'
-# AUTH_USER_MODEL = 'accounts.CustomUser'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
-# CRISPY_TEMPLATE_PACK = 'bootstrap4'
-# LOGIN_REDIRECT_URL = 'home'
-# LOGOUT_REDIRECT_URL = 'home'
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'apps.accounts.authentication.EmailAuthBackend',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.vk.VKOAuth2',
+]
+SOCIAL_AUTH_FACEBOOK_KEY = '806671376408532'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'aec1f7a516db33444fa22c84d543a2d1'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_VK_OAUTH2_KEY = '7339571'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'G1LuptsGxHDo32lFHPCG'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']

@@ -1,3 +1,6 @@
 django
 pillow
 mysqlclient
+django-registration
+social-auth-app-django
+python-social-auth

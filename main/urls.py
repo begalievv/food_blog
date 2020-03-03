@@ -22,9 +22,10 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('apps.accounts.urls')),
     path('', include('apps.posts.urls')),
-    path('categories', include('apps.categories.urls')),
+    path('categories/', include('apps.categories.urls')),
     path('admin/', admin.site.urls),
-    path('', include('social_django.urls'))
+    path('bestoff/', include(('apps.bestoff.urls'))),
+    path('', include('social_django.urls')),
 
 ]
 

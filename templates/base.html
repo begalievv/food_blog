@@ -8,12 +8,12 @@
     <meta name="keywords" content="Yoga, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Yummy | Template</title>
 
-    <!-- Google Font -->
+
+
     <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700&display=swap" rel="stylesheet">
 
-    <!-- Css Styles -->
+
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css"/>
     <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/nice-select.css' %}" type="text/css">
@@ -28,6 +28,10 @@
 <!-- Header Section Begin -->
 <header class="header-section">
     <div class="container">
+        <form class="form-inline my-2 my-lg-0" action="">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
         <div class="logo">
             <a href="{% url 'post_list' %}"><img src="{% static 'img/logo.png' %}" alt=""></a>
         </div>
@@ -35,22 +39,26 @@
             <nav class="main-menu mobile-menu">
                 <ul>
                     <li><a href="{% url 'post_list' %}">Home</a></li>
-                    <li><a href="{% url 'categories_list' %}">Categories</a>
-                        <!--                            <ul class="sub-menu">-->
-                        <!--                                <li><a href="about-me.html">About Me</a></li>-->
-                        <!--                                <li><a href="categories.html">Categories</a></li>-->
-                        <!--                                <li><a href="recipe.html">Recipe</a></li>-->
-                        <!--                                <li><a href="blog.html">Blog</a></li>-->
-                        <!--                                <li><a href="contact.html">Contact</a></li>-->
-                        <!--                            </ul>-->
-                    </li>
-                    <li><a href="recipe.html">Recipes</a></li>
-                    <li><a href="categories.html">Best Of</a></li>
-                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="{% url 'categories_list' %}">Categories</a></li>
+                    <li><a href="{% url 'best_of_list' %}">Best Of</a></li>
+
+                    {% if request.user.is_authenticated %}
+<!--                        <li><a href="#">Bookmarks</a></li>-->
+                    {% endif %}
+                    {% if request.user.is_authenticated %}
+                        <li><a href="{% url 'post_new' %}">New post</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                        <li><a href="{% url 'register' %}">Signup</a></li>
+                    {% endif %}
+
                 </ul>
             </nav>
         </div>
+
         <div id="mobile-menu-wrap"></div>
+
     </div>
 </header>
 

@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'social_django',
     'social.apps.django_app.default',
     'apps.accounts',
+    'apps.bestoff',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -147,6 +148,7 @@ AUTHENTICATION_BACKENDS = [
     'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.vk.VKOAuth2',
 ]
+
 SOCIAL_AUTH_FACEBOOK_KEY = '806671376408532'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'aec1f7a516db33444fa22c84d543a2d1'
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']

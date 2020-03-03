@@ -3,7 +3,8 @@ from PIL import Image
 from io import BytesIO
 from random import randint
 from django.db import models
-from django.utils import timezone
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import reverse
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -29,6 +30,15 @@ def upload_image_path(instance, filename):
     return f'post_images/{new_filename}/{final_filename}'
 
 
+class Like(models.Model):
+    user = models.ForeignKey(User,
+                             related_name='likes',
+                             on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
@@ -44,6 +54,11 @@ class Post(models.Model):
     status = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default='draft'
     )
+    likes = GenericRelation(Like)
+
+    @property
+    def total_likes(self):
+        return self.likes.count()
 
     class Meta:
         ordering = ('-created_at',)
@@ -87,13 +102,12 @@ class PostImage(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    user_name = models.CharField(max_length=80)
-    email = models.EmailField()
+    user_name = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ('created',)
+        ordering = ('-created',)
 
     def __str__(self):
         return 'Comment by {} on {}'.format(self.user_name, self.post)

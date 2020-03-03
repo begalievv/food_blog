@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="panel-heading">
+    <h3>Comment panel</h3>
+</div>
+<div class="panel-body">
+    {% if request.user.is_authenticated %}
+    <form action="{% url 'add_comment' object.id %}" method="POST">
+        {% csrf_token %}
+        <textarea class="form-control" placeholder="write a comment..." rows="3"></textarea>
+        <br>
+        <button type="submit" class="btn btn-info pull-right">Post</button>
+    </form>
+    <div class="clearfix"></div>
+    {% else %}
+    <br>
+    <h2>Вы не можете добавлять комментарии, если вы не авторизованы</h2>
+    <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    <hr>
+
+</div>
+
+{% endblock %}

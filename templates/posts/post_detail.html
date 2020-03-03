@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}
+<title>{{ object.title }}</title>
+{% endblock %}
+
 {% block content %}
+
 
 {% for image in object.images.all %}
 <div>
@@ -11,17 +16,69 @@
 
     {{ object.title }}
     <p>{{ object.description }} </p>
+    <div><img width="30px" height="30px" src="{% static 'like.png' %}" alt="">
+        {{ object.total_likes }}
 
+    </div>
+    {% if request.user == object.author %}
     <button type="button" class="btn btn-danger"><a href="{% url 'post_delete' object.id %}">delete</a></button>
     <button type="button" class="btn btn-success"><a href="{% url 'post_edit' object.id %}">Update</a></button>
     <button type="button" class="btn btn-success"><a href="{% url 'add_photo' object.id %}">Add photo</a></button>
+    {% endif %}
     <hr>
 
-    <form action="" method="POST">
-        <p>Добавить комментарий</p>
-        <input type="text">
-        <input type="submit" value="Добавить">
-    </form>
+
+    <div class="row bootstrap snippets" id="comm">
+    <div class="col-md-6 col-md-offset-2 col-sm-12">
+        <div class="comment-wrapper">
+            <div class="panel panel-info">
+                <a href="{% url 'add_comment' object.id %}"><h3>Добавить комментарий</h3></a>
+                <ul class="media-list">
+                {% for comment in object.comments.all %}
+                <li class="media">
+                    <a href="#" class="pull-left">
+                        <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
+                    </a>
+                    <div class="media-body">
+                        <span class="text-muted pull-right">
+                            <small class="text-muted">{{ comment.created }}</small>
+                        </span>
+                        <strong class="text-success">{{ comment.user_name }}</strong>
+                        <p>
+                            {{ comment.body }}
+                        </p>
+                    </div>
+                </li>
+                {% endfor %}
+                {% if not objects.comments.all %}
+                    <hr>
+                    <h3>Нету комментарий</h3>
+                {% endif %}
+            </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <style>
+    #comm{
+        margin:100px;
+    }
+
+    body{margin-top:20px;}
+
+.comment-wrapper .panel-body {
+    overflow:auto;
+    width:1000px;
+}
+
+.comment-wrapper .media-list .media img {
+    width:64px;
+    height:64px;
+    border:2px solid #e5e7e8;
+}
+
+</style>
 
     {% endblock %}
-

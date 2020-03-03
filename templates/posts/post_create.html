@@ -4,8 +4,11 @@
 {% block content %}
 
 <h1>New post</h1>
-<form action="" method="POST">
+<form action="{% url 'post_new' %}" method="POST">
     {% csrf_token %}
+<!--    {{ form.title }}-->
+<!--    {{ form.description }}-->
+<!--    {{ form.category }}-->
     {{ form.as_p }}
     <button type="submit">New</button>
 </form>

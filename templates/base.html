@@ -43,7 +43,7 @@
                     <li><a href="{% url 'best_of_list' %}">Best Of</a></li>
 
                     {% if request.user.is_authenticated %}
-<!--                        <li><a href="#">Bookmarks</a></li>-->
+                        <li><a href="#">Bookmarks</a></li>
                     {% endif %}
                     {% if request.user.is_authenticated %}
                         <li><a href="{% url 'post_new' %}">New post</a></li>

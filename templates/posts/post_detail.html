@@ -20,7 +20,7 @@
         {{ object.total_likes }}
 
     </div>
-    {% if request.user == object.author %}
+    {% if request.user == object.author or user.is_staff %}
     <button type="button" class="btn btn-danger"><a href="{% url 'post_delete' object.id %}">delete</a></button>
     <button type="button" class="btn btn-success"><a href="{% url 'post_edit' object.id %}">Update</a></button>
     <button type="button" class="btn btn-success"><a href="{% url 'add_photo' object.id %}">Add photo</a></button>

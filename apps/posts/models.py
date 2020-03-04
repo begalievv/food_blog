@@ -46,7 +46,7 @@ class Post(models.Model):
     )
     title = models.CharField(max_length=250)
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='posts'
+        User, on_delete=models.CASCADE, related_name='posts', null=True, blank=True
     )
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

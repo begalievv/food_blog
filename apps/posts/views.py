@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
@@ -65,20 +66,15 @@ class PostDetailView(DetailView):
 class PostCreateView(LoginRequiredMixin,CreateView):
     model = Post
     template_name = 'posts/post_create.html'
-    # fields = ('title', 'description', 'category')
-    fields = '__all__'
-    # def post(self, request):
-    #     todos = Post.objects.all()
-    #     form = PostForm(request.POST)
-    #     form.instance.author = request.user
-    #     form.save()
-    #     print('beka')
-    #     return redirect('/')
-    #     return redirect('/')
+    fields = ('title', 'description', 'category', 'author')
+    success_url = '/'
 
-    # def form_valid(self, form):
-    #     form.save()
-    #     return super().form_valid(form)
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class AddComment(CreateView):
     model = Comment

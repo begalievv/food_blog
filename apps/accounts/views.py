@@ -2,6 +2,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.views.generic import DetailView
+from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .forms import LoginForm, UserRegistrationForm
 
 
@@ -43,3 +47,16 @@ def register(request):
     else:
         user_form = UserRegistrationForm()
     return render(request, 'accounts/register.html', {'user_form': user_form})
+
+
+# def cabinet(request, id):
+#     user_model = get_user_model().objects.get(pk=id)
+#     return render(request, 'accounts/cabinet.html', {'user': user_model})
+
+class CabinetView(LoginRequiredMixin, DetailView):
+    model = get_user_model()
+    template_name = 'accounts/cabinet.html'
+
+    def get_object(self):
+        return self.request.user
+

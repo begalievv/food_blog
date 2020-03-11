@@ -8,77 +8,123 @@
 {% block content %}
 
 
-{% for image in object.images.all %}
-<div>
-    <img height="300px" width="300px" src="{{ image.get_absolute_image_url }}">
-    <div/>
-    {% endfor %}
-
-    {{ object.title }}
-    <p>{{ object.description }} </p>
-    <div><img width="30px" height="30px" src="{% static 'like.png' %}" alt="">
-        {{ object.total_likes }}
+<div style="margin-left: 20px">
+    <h4 class="text-success">{{ object.author }}</h4>
+    <h5>{{ object.created_at }}</h5>
+</div>
+<h2 align="center">{{ object.title }}</h2>
+<p>
+    <div>
+        {% for image in object.images.all %}
+        <img height="300px" width="400px" src="{{ image.get_absolute_image_url }}">
+        {% endfor %}
 
     </div>
-    {% if request.user == object.author or user.is_staff %}
-    <button type="button" class="btn btn-danger"><a href="{% url 'post_delete' object.id %}">delete</a></button>
-    <button type="button" class="btn btn-success"><a href="{% url 'post_edit' object.id %}">Update</a></button>
-    <button type="button" class="btn btn-success"><a href="{% url 'add_photo' object.id %}">Add photo</a></button>
-    {% endif %}
+    <div class="description">
+        {{ object.description }}
+    </div>
+</p>
+
+<div style="float:right;" align="center">
+    <img width="60px" height="60px" src="{% static 'like.png' %}" alt="">
+    {{ object.total_likes }}
     <hr>
+    <h3 align="center">Юзеры которые лайкнули этот пост:</h3>
+    {% for user in likes %}
+    <h3 align="center">{{ user }}</h3>
+    {% endfor %}
+
+</div>
+
+{% if request.user == object.author or user.is_staff %}
+<button type="button" class="btn btn-danger"><a href="{% url 'post_delete' object.id %}">delete</a></button>
+<button type="button" class="btn btn-success"><a href="{% url 'post_edit' object.id %}">Update</a></button>
+<button type="button" class="btn btn-success"><a href="{% url 'add_photo' object.id %}">Add photo</a></button>
+{% endif %}
 
 
-    <div class="row bootstrap snippets" id="comm">
+<div class="row bootstrap snippets" id="comm">
     <div class="col-md-6 col-md-offset-2 col-sm-12">
         <div class="comment-wrapper">
             <div class="panel panel-info">
-                <a href="{% url 'add_comment' object.id %}"><h3>Добавить комментарий</h3></a>
+                <div class="panel-heading">
+                    <h3>Comment panel</h3>
+                </div>
+                <div class="panel-body">
+                    {% if request.user.is_authenticated %}
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        {{ form }}
+                        <br>
+                        <button type="submit" class="btn btn-info pull-right">Post</button>
+                    </form>
+                    <div class="clearfix"></div>
+                    {% else %}
+                    <br>
+                    <h2>Вы не можете добавлять комментарии, если вы не авторизованы</h2>
+                    <a href="{% url 'login' %}">Login</a>
+                    {% endif %}
+
+                </div>
                 <ul class="media-list">
-                {% for comment in object.comments.all %}
-                <li class="media">
-                    <a href="#" class="pull-left">
-                        <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
-                    </a>
-                    <div class="media-body">
-                        <span class="text-muted pull-right">
-                            <small class="text-muted">{{ comment.created }}</small>
-                        </span>
-                        <strong class="text-success">{{ comment.user_name }}</strong>
-                        <p>
-                            {{ comment.body }}
-                        </p>
-                    </div>
-                </li>
-                {% endfor %}
-                {% if not objects.comments.all %}
+                    {% for comment in object.comments.all %}
+                    <li class="media">
+                        <a href="#" class="pull-left">
+                            <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
+                        </a>
+                        <div class="media-body">
+                                <span class="text-muted pull-right">
+                                    <small class="text-muted">{{ comment.created }}</small>
+                                </span>
+                            <strong class="text-success">{{ comment.user_name }}</strong>
+                            <p>
+                                {{ comment.body }}
+                            </p>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    {% if not object.comments.all %}
                     <hr>
                     <h3>Нету комментарий</h3>
-                {% endif %}
-            </ul>
+                    {% endif %}
+                </ul>
             </div>
         </div>
 
     </div>
 </div>
 
-    <style>
+<style>
+    .description{
+        width: 500px;
+        float: left;
+    }
+
     #comm{
         margin:100px;
+        margin-top:200px;
     }
 
     body{margin-top:20px;}
 
-.comment-wrapper .panel-body {
-    overflow:auto;
-    width:1000px;
-}
+    .comment-wrapper .panel-body {
+        overflow:auto;
+        width:1000px;
+    }
 
-.comment-wrapper .media-list .media img {
-    width:64px;
-    height:64px;
-    border:2px solid #e5e7e8;
-}
+    .comment-wrapper .media-list .media img {
+        width:64px;
+        height:64px;
+        border:2px solid #e5e7e8;
+    }
+    .media {
+        margin: 20px;
+        width: 900px;
+    }
+    .media-body{
+        margin-left: 10px;
+    }
 
 </style>
 
-    {% endblock %}
+{% endblock %}

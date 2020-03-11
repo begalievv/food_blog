@@ -9,8 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-
-
     <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700&display=swap" rel="stylesheet">
 
 
@@ -43,7 +41,7 @@
                     <li><a href="{% url 'best_of_list' %}">Best Of</a></li>
 
                     {% if request.user.is_authenticated %}
-                        <li><a href="#">Bookmarks</a></li>
+                        <li><a href="{% url 'cabinet' %}">Profile</a></li>
                     {% endif %}
                     {% if request.user.is_authenticated %}
                         <li><a href="{% url 'post_new' %}">New post</a></li>

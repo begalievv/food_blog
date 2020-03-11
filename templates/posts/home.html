@@ -1,45 +1,55 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
+{% block title %}
+<title>Home page</title>
+{% endblock %}
 
+{% block content %}
 {% for post in posts %}
 <section class="caviar-about-us-area section-padding-150" id="about">
-        <div class="container">
-            <!-- About Us Single Area -->
-            <div class="row align-items-center">
-                <div class="col-12 col-md-6">
-                    <div class="about-us-thumbnail wow fadeInUp" data-wow-delay="0.5s">
-<!--                        <a href="{% url 'post_detail' post.id %}">-->
-                            <img height="300px" width="400px" src="{{ post.images.first.get_absolute_image_url }}" alt="">
-<!--                        </a>-->
-                    </div>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-6">
+                <div class="about-us-thumbnail wow fadeInUp" data-wow-delay="0.5s" align="center">
+                    {% if post.images.first %}
+                    <img height="300px" width="400px" src="{{ post.images.first.get_absolute_image_url }}" alt="">
+                    {% else %}
+                    <img height="300px" width="300px" src="{% static 'photo_none.png' %}" alt="">
+                    {% endif %}
                 </div>
-                <div class="col-12 col-md-6 col-lg-5 ml-md-auto">
-                    <div class="section-heading">
-                        <a href="{% url 'post_detail' post.id %}"><h2>{{ post.title }}</h2></a>
-                    </div>
-                    <div class="about-us-content">
-                        <p>{{ post.description }}</p>
-                        <h5>{{ post.created_at }}</h5>
-                        <br>
-                        <p><img width="30px" height="30px" src="{% static 'like.png' %}" alt="">
-                            {{ post.total_likes }}</p>
-                        {% if request.user.is_authenticated %}
-
-                            <form action="{% url 'like_post' post.pk %}" method="POST">
-                                {% csrf_token %}
-                                <input type="submit" value="Like">
-                            </form>
-                            <form action="{% url 'remove_like_post' post.pk %}" method="POST">
-                                {% csrf_token %}
-                                <input type="submit" value="Remove Like">
-                            </form>
-                        {% endif %}
-                    </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-5 ml-md-auto">
+                <div class="section-heading">
+                    <a href="{% url 'post_detail' post.id %}"><h2>{{ post.title }}</h2></a>
+                </div>
+                <div class="about-us-content">
+                    <p>{{ post.description }}</p>
+                    <h5>{{ post.created_at }}</h5>
+                    <br>
+                    <p>
+                        <img width="30px" height="30px" src="{% static 'like.png' %}" alt="">
+                        <span style="margin-right: 250px">{{ post.total_likes }}</span>
+                        @{{ post.author }}
+                    </p>
+                    {% if request.user.is_authenticated %}
+                    {% for like in post.likes.all %}
+                    {% if like.user == request.user %}
+                    <form action="{% url 'remove_like_post' post.pk %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" value="Remove Like">
+                    </form>
+                    {% endif %}
+                    {% endfor %}
+                    <form action="{% url 'like_post' post.pk %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" value="Like">
+                    </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
+    </div>
     <hr>
 
 </section>
@@ -49,30 +59,33 @@
 
 {% if is_paginated %}
 
-    <nav aria-label="...">
-        <ul class="pagination">
-            <li class="page-item {% if not prev_url %} disabled {% endif %}">
-                <a class="page-link" href="{{ prev_url }}" tabindex="-1" aria-disabled="true">Previous</a>
-            </li>
+    <div style="margin-left: 40%; margin-bottom: 50px">
+        <nav aria-label="...">
+            <ul class="pagination">
+                <li class="page-item {% if not prev_url %} disabled {% endif %}">
+                    <a class="page-link" href="{{ prev_url }}" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
 
-            {% for n in page_object.paginator.page_range %}
-                {% if page_object.number == n %}
-                    <li class="page-item active" aria-current="page">
-                        <a class="page-link" href="?page={{ n }}">{{ n }}<span
-                                class="sr-only">(current)</span></a>
-                    </li>
-                {% elif n > page_object.number|add:-3 and n < page_object.number|add:3 %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ n }}">{{ n }}</a>
-                    </li>
-                {% endif %}
-            {% endfor %}
+                {% for n in page_object.paginator.page_range %}
+                    {% if page_object.number == n %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="?page={{ n }}">{{ n }}<span
+                                    class="sr-only">(current)</span></a>
+                        </li>
+                    {% elif n > page_object.number|add:-3 and n < page_object.number|add:3 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
 
-            <li class="page-item {% if not next_url %} disabled {% endif %}">
-                <a class="page-link" href="{{ next_url }}" tabindex="-1" aria-disabled="true">Next</a>
-            </li>
-        </ul>
-    </nav>
+                <li class="page-item {% if not next_url %} disabled {% endif %}">
+                    <a class="page-link" href="{{ next_url }}" tabindex="-1" aria-disabled="true">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
 {% endif %}
 
 {% endblock %}

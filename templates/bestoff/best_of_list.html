@@ -1,54 +1,60 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}
+<title>Best Off</title>
+{% endblock %}
+
 {% block content %}
 
 {% for post in posts %}
 <section class="caviar-about-us-area section-padding-150" id="about">
-        <div class="container">
-            <!-- About Us Single Area -->
-            <div class="row align-items-center">
-                <div class="col-12 col-md-6">
-                    <div class="about-us-thumbnail wow fadeInUp" data-wow-delay="0.5s">
-                        <img height="300px" width="500px" src="{{ post.images.first.get_absolute_image_url }}" alt="">
-                    </div>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-6">
+                <div class="about-us-thumbnail wow fadeInUp" data-wow-delay="0.5s" align="center">
+                    {% if post.images.first %}
+                    <img height="300px" width="400px" src="{{ post.images.first.get_absolute_image_url }}" alt="">
+                    {% else %}
+                    <img height="300px" width="300px" src="{% static 'photo_none.png' %}" alt="">
+                    {% endif %}
                 </div>
-                <div class="col-12 col-md-6 col-lg-5 ml-md-auto">
-                    <div class="section-heading">
-                        <a href="{% url 'post_detail' post.id %}"><h2>{{ post.title }}</h2></a>
-                    </div>
-                    <div class="about-us-content">
-                        <p>{{ post.description }}</p>
-                        <p><img width="30px" height="30px" src="{% static 'like.png' %}" alt="">
-                            {{ post.total_likes }}</p>
-                        {% if request.user.is_authenticated %}
-
-                            <form action="{% url 'like_post' post.pk %}" method="POST">
-                                {% csrf_token %}
-                                <input type="submit" value="Like">
-                            </form>
-                            <form action="{% url 'remove_like_post' post.pk %}" method="POST">
-                                {% csrf_token %}
-                                <input type="submit" value="Remove Like">
-                            </form>
-                        {% endif %}
-                    </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-5 ml-md-auto">
+                <div class="section-heading">
+                    <a href="{% url 'post_detail' post.id %}"><h2>{{ post.title }}</h2></a>
+                </div>
+                <div class="about-us-content">
+                    <p>{{ post.description }}</p>
+                    <h5>{{ post.created_at }}</h5>
+                    <br>
+                    <p>
+                        <img width="30px" height="30px" src="{% static 'like.png' %}" alt="">
+                        <span style="margin-right: 250px">{{ post.total_likes }}</span>
+                        @{{ post.author }}
+                    </p>
+                    {% if request.user.is_authenticated %}
+                    {% for like in post.likes.all %}
+                    {% if like.user == request.user %}
+                    <form action="{% url 'remove_like_post' post.pk %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" value="Remove Like">
+                    </form>
+                    {% endif %}
+                    {% endfor %}
+                    <form action="{% url 'like_post' post.pk %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" value="Like">
+                    </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
+    </div>
     <hr>
 
 </section>
 
-
-<!--<div class="card" style="width: 18rem;">-->
-<!--  <img src="{{ post.images.first.get_absolute_image_url }}" class="card-img-top" alt="">-->
-<!--  <div class="card-body">-->
-<!--    <h5 class="card-title">{{ post.title }}</h5>-->
-<!--    <p class="card-text">{{ post.description }}</p>-->
-<!--    <a href="{% url 'post_detail' post.id %}" class="btn btn-primary">Go somewhere</a>-->
-<!--  </div>-->
-<!--</div>-->
 {% endfor %}
 
 {% endblock %}

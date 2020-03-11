@@ -59,4 +59,3 @@ class CabinetView(LoginRequiredMixin, DetailView):
 
     def get_object(self):
         return self.request.user
-

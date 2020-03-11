@@ -1,19 +1,14 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView, View
+from django.views.generic import CreateView, DetailView, DeleteView, UpdateView, FormView
 
-from .models import PostImage, Post
+from .models import PostImage
 from .likes import *
 from .forms import *
-
-
-# class PostsListView(ListView):
-#     template_name = 'posts/home.html'
-#     model = Post
 
 
 def post_list(request):
@@ -22,8 +17,7 @@ def post_list(request):
         posts = Post.objects.filter(Q(title__icontains=search_query) | Q(description__icontains=search_query))
     else:
         posts = Post.objects.all()
-    # posts = Post.objects.all()
-    paginator = Paginator(posts, 3)
+    paginator = Paginator(posts, 2)
     page_number = request.GET.get("page", 1)
     page = paginator.get_page(page_number)
 
@@ -40,7 +34,7 @@ def post_list(request):
         next_url = ""
 
     context = {
-        'posts': posts,
+        'posts': page.object_list,
         "page_object": page,
         "is_paginated": is_paginated,
         "next_url": next_url,
@@ -50,17 +44,25 @@ def post_list(request):
     return render(request, "posts/home.html", context)
 
 
-class PostDetailView(DetailView):
+class PostDetailView(FormView, DetailView):
     template_name = 'posts/post_detail.html'
     model = Post
+    form_class = CommentForm
 
-    def post(self, request):
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            form.instance.user_name = request.user
-            form.save()
-        return redirect('/')
+    def form_valid(self, form):
+        form = form.save(commit=False)
+        form.user_name = self.request.user
+        form.post = Post.objects.get(pk=self.kwargs['pk'])
+        form.save()
+        return super(PostDetailView, self).form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['likes'] = get_fans(Post.objects.get(pk=self.kwargs['pk']))
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['pk']})
 
 
 class PostCreateView(LoginRequiredMixin,CreateView):
@@ -79,7 +81,13 @@ class PostCreateView(LoginRequiredMixin,CreateView):
 class AddComment(CreateView):
     model = Comment
     template_name = 'posts/post_add_comment.html'
-    fields = '__all__'
+    fields = ('body',)
+
+    def form_valid(self, form):
+        form = form.save(commit=False)
+        print(self.kwargs)
+        form.post = Post.objects.get(slug=self.kwargs['slug'])
+        form.save()
 
 
 class PostEditView(UpdateView):
@@ -97,17 +105,33 @@ class PostDeleteView(DeleteView):
 class PostAddPhoto(CreateView):
     model = PostImage
     template_name = 'posts/post_add_photo.html'
-    fields = '__all__'
+    fields = ('image',)
+
+    def form_valid(self, form):
+        form = form.save(commit=False)
+        print(self.kwargs)
+        form.post = Post.objects.get(pk=self.kwargs['pk'])
+        form.save()
+        return HttpResponseRedirect('/')
+
 
 def like_post(request, pk):
     if request.method == "POST":
         obj = Post.objects.get(pk=pk)
         add_like(obj, request.user)
-        return redirect('/')
+        obj.status_like = True
+        obj.save()
+        return redirect('post_list')
 
 
 def remove_like_post(request, pk):
     if request.method == "POST":
         obj = Post.objects.get(pk=pk)
         remove_like(obj, request.user)
-        return redirect('/')
+        obj.status_like = False
+        obj.save()
+        return redirect('post_list')
+
+
+
+

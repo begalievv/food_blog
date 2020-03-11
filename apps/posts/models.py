@@ -14,19 +14,14 @@ from apps.categories.models import Category
 
 def get_filename_ext(filepath):
     base_name = os.path.basename(filepath)
-    print('base_name', base_name)
     name, ext = os.path.splitext(base_name)
-    print(name, ext)
     return name, ext
 
 
 def upload_image_path(instance, filename):
     new_filename = randint(1, 3999999999)
-    print('newfilename', new_filename)
     name, ext = get_filename_ext(filename)
-    print(name, ext)
     final_filename = f'{new_filename}{ext}'
-    print('final_filename', final_filename)
     return f'post_images/{new_filename}/{final_filename}'
 
 
@@ -37,6 +32,9 @@ class Like(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
+
+    def __str__(self):
+        return str(self.user)
 
 
 class Post(models.Model):
@@ -101,8 +99,8 @@ class PostImage(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    user_name = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', null=True)
+    user_name = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments', null=True)
     body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
 
@@ -111,3 +109,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return 'Comment by {} on {}'.format(self.user_name, self.post)
+

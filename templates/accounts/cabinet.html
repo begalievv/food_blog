@@ -1,20 +1,67 @@
 {% extends 'base.html' %}
+{% load static %}
 
-<!--{% block title %}-->
-<!--    <title>Cabinet</title>-->
-<!--{% endblock %}-->
+{% block title %}
+<title>Личный кабинет</title>
+{% endblock %}
 
-<!--{% block content %}-->
-<!--{{ user.user_name }}-->
-<!--{{ user.email }}-->
-<!--{% for post in user.posts %}-->
+{% block content %}
 
-<!--{{ post.title }}-->
-<!--{{ post.description }}-->
-<!--{{ post.total_likes }}-->
-<!--<hr>-->
+<h3 style="margin-left: 50px">User : {{ object.username }}</h3>
+<h2 align="center">Все посты пользователья:</h2>
+<hr>
 
-<!--{% endfor %}-->
+{% for post in object.posts.all %}
 
-<!--{% endblock %}-->
-<h1>dflsjk</h1>
+<section class="caviar-about-us-area section-padding-150" id="about">
+        <div class="container">
+            <!-- About Us Single Area -->
+            <div class="row align-items-center">
+                <div class="col-12 col-md-6">
+                    <div class="about-us-thumbnail wow fadeInUp" data-wow-delay="0.5s" align="center">
+                        {% if post.images.first %}
+                        <img height="300px" width="400px" src="{{ post.images.first.get_absolute_image_url }}" alt="">
+                        {% else %}
+                        <img height="300px" width="300px" src="{% static 'photo_none.png' %}" alt="">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-5 ml-md-auto">
+                    <div class="section-heading">
+                        <a href="{% url 'post_detail' post.id %}"><h2>{{ post.title }}</h2></a>
+                    </div>
+                    <div class="about-us-content">
+                        <p>{{ post.description }}</p>
+                        <h5>{{ post.created_at }}</h5>
+                        <br>
+                        <p>
+                            {% if post.status_like or not request.user.is_authenticated %}
+                            <img width="30px" height="30px" src="{% static 'like.png' %}" alt="">
+                            {% else %}
+                            <img width="30px" height="30px" src="{% static 'dislike.png' %}" alt="">
+                            {% endif %}
+                            {{ post.total_likes }}</p>
+                        {% if request.user.is_authenticated %}
+                            {% if post.status_like %}
+                                <form action="{% url 'remove_like_post' post.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="submit" value="Remove Like">
+                                </form>
+                            {% else %}
+                                <form action="{% url 'like_post' post.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="submit" value="Like">
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    <hr>
+
+</section>
+
+{% endfor %}
+
+{% endblock %}
